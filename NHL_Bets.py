@@ -27,7 +27,6 @@ df['goal_difference'] = df['home_goals'] - df['visitor_goals']
 
 #new variables to show number of games in past 7 days for home/visitor -> NEED TO ADD LOGIC TO COUNT ONLY WITHIN DATE RANGE
 df['7_days_prior'] = df['date'] - timedelta(days=7)
-
 df['home_games_past_week'] = df.groupby('home')['home'].transform('count')
 df['visitor_games_past_week'] = df.groupby('visitor')['visitor'].transform('count')
 
@@ -35,13 +34,11 @@ df['visitor_games_past_week'] = df.groupby('visitor')['visitor'].transform('coun
 df_home_inj['home_inj'] = df_home_inj.groupby('Team')['Team'].transform('count')
 df_home_inj['home'] = df_home_inj['Team']
 df_home_inj = df_home_inj.drop(columns=['Team','Date of Injury'])
-
 df = pd.merge(df,df_home_inj.drop_duplicates(subset=['home']),how='left',on='home')
 
 df_visitor_inj['visitor_inj'] = df_visitor_inj.groupby('Team')['Team'].transform('count')
 df_visitor_inj['visitor'] = df_visitor_inj['Team']
 df_visitor_inj = df_visitor_inj.drop(columns=['Team','Date of Injury'])
-
 df = pd.merge(df,df_visitor_inj.drop_duplicates(subset=['visitor']),how='left',on='visitor')
 
 df['home_inj'] = df['home_inj'].fillna(0)
@@ -54,7 +51,6 @@ df['home_win'] = np.where(df['goal_difference'] > 0, 1, 0)
 df['home_loss'] = np.where(df['goal_difference'] < 0, 1, 0)
 
 df_visitor = pd.get_dummies(df['visitor'], dtype=np.int64) #need to add teams who have not played away or wait until later in season
-
 df_home = pd.get_dummies(df['home'], dtype=np.int64) #need to add teams who have not played at home or wait until later in season
 
 # subtract home from visitor
@@ -63,7 +59,6 @@ df_model = df_home.sub(df_visitor)
 df_model['goal_difference'] = df['goal_difference']
 
 df_train = df_model # not required but I like to rename my dataframe with the name train. ALSO NEED TO INCORPORATE NEW INJURY/FATIGUE DATA
-
 df_train = df_train.fillna(0)
 
 lr = Ridge(alpha=0.001) 
