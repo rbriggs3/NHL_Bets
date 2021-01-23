@@ -19,18 +19,19 @@ df_visitor_inj = pd.read_csv(hockey_injuries)
 df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
 df_home_inj['Date of Injury'] = df_home_inj['Date of Injury'].str[4:]
 df_home_inj['Date of Injury'] = list(map(lambda x: datetime.strptime(x,'%b %d %Y').strftime('%Y-%m-%d'), df_home_inj['Date of Injury']))
+
 df_visitor_inj['Date of Injury'] = df_visitor_inj['Date of Injury'].str[4:]
 df_visitor_inj['Date of Injury'] = list(map(lambda x: datetime.strptime(x,'%b %d %Y').strftime('%Y-%m-%d'), df_visitor_inj['Date of Injury']))
 
 df['goal_difference'] = df['home_goals'] - df['visitor_goals']
 
-#new variables to show number of games in past 7 days for home/visitor
+#new variables to show number of games in past 7 days for home/visitor -> NEED TO ADD LOGIC TO COUNT ONLY WITHIN DATE RANGE
 df['7_days_prior'] = df['date'] - timedelta(days=7)
 
 df['home_games_past_week'] = df.groupby('home')['home'].transform('count')
 df['visitor_games_past_week'] = df.groupby('visitor')['visitor'].transform('count')
 
-#new varaible to show number of injuries in previous 3 days
+#new varaible to show number of injuries in previous 3 days -> NEED TO ADD LOGIC TO COUNT ONLY WITHIN DATE RANGE
 df_home_inj['home_inj'] = df_home_inj.groupby('Team')['Team'].transform('count')
 df_home_inj['home'] = df_home_inj['Team']
 df_home_inj = df_home_inj.drop(columns=['Team','Date of Injury'])
@@ -61,7 +62,7 @@ df_model = df_home.sub(df_visitor)
 
 df_model['goal_difference'] = df['goal_difference']
 
-df_train = df_model # not required but I like to rename my dataframe with the name train.
+df_train = df_model # not required but I like to rename my dataframe with the name train. ALSO NEED TO INCORPORATE NEW INJURY/FATIGUE DATA
 
 df_train = df_train.fillna(0)
 
